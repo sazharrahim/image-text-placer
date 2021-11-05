@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css" />
+  <!-- 'nano' theme -->
+  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+  <title>Image Editor</title>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <a class="navbar-brand" href="#">Image Manipulator</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('allfolder_route') }}">All folders</a>
+        </li>
+      </ul>
+      <div class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" id="searchInput" aria-label="Search">
+        <button class="btn btn-outline-info mx-1 my-2 my-sm-0" id="statusSubmit">Status</button>
+        <button class="btn btn-outline-success mx-1 my-2 my-sm-0" id="searchSubmit">Search</button>
+        <button class="btn btn-outline-danger mx-1 my-2 my-sm-0" data-toggle="modal"
+          data-target="#deleteModal">Delete</button>
+      </div>
+    </div>
+  </nav>
+  <br>
+  <div class="container-fluid">
+
+    <section class="row justify-content-center">
+
+      <div class="jumbotron col-sm-12 col-md-9 col-lg-7 p-5">
+        <form action="{{ url_for('get_file')}}" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="d-inline-block badge badge-info p-1">Choose folder name:</label>
+            <input type="input" class="form-control" name="folder_id" placeholder="Choose unique folder name" required>
+          </div>
+          <div class="form-group">
+            <input type="file" class="form-control-file" name="file" required>
+          </div>
+
+          <div class="row mx-0">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Box position:</label>
+            </div>
+            <div class="col-sm-9">
+              <div class="custom-control custom-checkbox my-1 mr-sm-2 d-inline-block">
+                <input type="checkbox" class="custom-control-input" id="topPosition" value="top" name="boxposition"
+                  checked>
+                <label class="custom-control-label" for="topPosition">Top</label>
+              </div>
+              <div class="custom-control custom-checkbox my-1 mr-sm-2 d-inline-block">
+                <input type="checkbox" class="custom-control-input" id="middlePosition" value="middle"
+                  name="boxposition">
+                <label class="custom-control-label" for="middlePosition">Middle</label>
+              </div>
+              <div class="custom-control custom-checkbox my-1 mr-sm-2 d-inline-block">
+                <input type="checkbox" class="custom-control-input" id="bottomPosition" value="bottom"
+                  name="boxposition">
+                <label class="custom-control-label" for="bottomPosition">Bottom</label>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row mx-0 mt-2">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Text/Box color pair:</label>
+            </div>
+            <div class="col-sm-9">
+
+
+              {%for i in range(1, 5)%}
+
+              <div class="custom-control col-sm-5 custom-checkbox mr-sm-2 my-2 d-inline-block">
+                <input type="checkbox" value="-" class="custom-control-input mr-1" name="fontboxcolor" id="valueColorPicker{{i}}"
+                  {{ "checked" if i== 1 else "" }}>
+                <label class="custom-control-label" for="valueColorPicker{{i}}"></label>
+                <div class="d-inline-block mr-3">
+                  <div class="font-color-picker-{{i}}"></div>
+                </div>
+                <div class="d-inline-block mr-3">
+                  <div class="box-color-picker-{{i}}"></div>
+                </div>
+              </div>
+
+              {%endfor%}
+
+            </div>
+          </div>
+
+
+          <div class="row mx-0 mt-2">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Select font style:</label>
+            </div>
+            <div class="col-sm-9">
+              {% if data  %}
+              {% for i in data['fontstyles'] %}
+              <div class="custom-control custom-checkbox mr-sm-2 d-inline-block">
+                <input type="checkbox" class="custom-control-input mr-1" name="fontstyle" id="fontstyle{{i}}"
+                  value="{{i}}" {{ "checked" if i== "segoeui.ttf" else "" }}>
+                <label class="custom-control-label" for="fontstyle{{i}}">{{i[:-4].upper()}}</label>
+              </div>
+              {% endfor %}
+
+              {% endif %}
+            </div>
+          </div>
+
+
+          <div class="row mx-0 mt-2">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Select Box style:</label>
+            </div>
+            <div class="col-sm-9">
+              {% if data  %}
+              {% for i in data['boxtype'] %}
+              <div class="custom-control custom-checkbox mr-sm-2 d-inline-block">
+                <input type="checkbox" class="custom-control-input mr-1" name="boxtype" id="boxtype{{i}}" value="{{i}}"
+                  {{ "checked" if i== "rectangle" else "" }}>
+                <label class="custom-control-label" for="boxtype{{i}}">{{i.upper()}}</label>
+              </div>
+              {% endfor %}
+
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row mx-0 mt-2">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Select box width:</label>
+            </div>
+            <div class="col-sm-9 row mx-0">
+              <div class="row">
+                <div class="input-group mb-2 col-md-6">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">Rectangle</div>
+                  </div>
+                  <input type="number" class="form-control" name="rectanglewidth" placeholder="Rectangle" value="100">
+                </div>
+                <div class="input-group mb-2 col-md-6">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">Polygon</div>
+                  </div>
+                  <input type="number" class="form-control" name="polygonwidth" placeholder="Polygon" value="70">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row mx-0 mt-2">
+            <div class="col-sm-3 p-0">
+              <label class="d-inline-block badge badge-info p-1">Polygon info:</label>
+            </div>
+            <div class="col-sm-9 row mx-0">
+              <div class="row">
+                <div class="input-group mb-2 col-md-6">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">Border px</div>
+                  </div>
+                  <input type="number" class="form-control" name="polygoneborderpx" placeholder="Rectangle" value="10">
+                </div>
+                <div class="input-group mb-2 col-md-6">
+                  <div class="input-group-prepend  mr-1">
+                    <div class="input-group-text">Border color</div>
+                  </div>
+                  <input type="hidden" hidden class="form-control" id="polygonebordercolor" name="polygonebordercolor" value="#42445A">
+                  <div class="polygonebordercolor"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Do you really want to delete this folder!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="deleteSubmit">Delete
+            folder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#deleteSubmit").click(function () {
+        startAjax("/deletefolder/" + $("#searchInput").val(), false)
+      });
+      $("#statusSubmit").click(function () {
+        startAjax("/taskstatus/" + $("#searchInput").val(), true)
+      });
+      $("#searchSubmit").click(function () {
+        startAjax("/getimages/" + $("#searchInput").val(), true)
+      });
+
+      $("form").submit(function (e) {
+        // e.preventDefault();
+        // alert("Submitted");
+      });
+
+      $( ".pickr" ).addClass( "my-auto" );
+
+      function startAjax(route, openLink) {
+        $.ajax({
+          url: route,
+          success: function (result) {
+            if (openLink) {
+              window.location.replace(route);
+            }
+            else {
+              Swal.fire(
+                'Good job!',
+                result,
+                'success'
+              )
+            }
+          },
+          error: function (xhr) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: xhr.responseJSON.response,
+            })
+          }
+        });
+      }
+
+    });
+  </script>
+
+  <script>
+
+    colorPicker('.font-color-picker-1', false, 'rgba(255, 255, 255, 1)', "valueColorPicker1", true);
+    colorPicker('.font-color-picker-2', false, 'rgba(75, 74, 74, 1)', "valueColorPicker2", true);
+    colorPicker('.font-color-picker-3', false, 'rgba(141, 140, 140, 1)', "valueColorPicker3", true);
+    colorPicker('.font-color-picker-4', false, 'rgba(157, 57, 57, 1)', "valueColorPicker4", true);
+
+    colorPicker('.box-color-picker-1', false, 'rgba(0, 0, 0, 0.70)', "valueColorPicker1");
+    colorPicker('.box-color-picker-2', false, 'rgba(75, 74, 74, 0.67)', "valueColorPicker2");
+    colorPicker('.box-color-picker-3', false, 'rgba(141, 140, 140, 1)', "valueColorPicker3");
+    colorPicker('.box-color-picker-4', false, 'rgba(157, 57, 57, .1)', "valueColorPicker4");
+
+    const pickrr = Pickr.create({
+      el: '.polygonebordercolor',
+      theme: 'nano',
+      defaultRepresentation: 'HEX',
+      position: 'bottom-middle',
+      components: {
+        preview: true,
+        opacity: true,
+        hue: true,
+        interaction: {
+          hex: true,
+          save: true
+        }
+      }
+    });
+    pickrr.on('save', (color, instance) => {
+      document.getElementById("polygonebordercolor").value = color.toHEXA()
+    });
+
+    function colorPicker(colorClass, disabled, defaultColor, inputId, opacityLock = false) {
+      const pickr = Pickr.create({
+        el: colorClass,
+        theme: 'nano', // or 'monolith', or 'nano'
+        disabled: disabled,
+        default: defaultColor,
+        defaultRepresentation: 'RGBA',
+        lockOpacity: opacityLock,
+        components: {
+
+          // Main components
+          preview: true,
+          opacity: true,
+          hue: true,
+
+          // Input / output Options
+          interaction: {
+            rgba: true,
+            input: true,
+            save: true
+          }
+        }
+      });
+
+      pickr.on('save', (color, instance) => {
+        setTextBoxInputColor(opacityLock, inputId, color.toRGBA().toString(0))
+      });
+      //  first one is font rgb and second one is box rgba
+      setTextBoxInputColor(opacityLock, inputId, defaultColor)
+      
+    }
+
+    function setTextBoxInputColor(opacityLock, inputId, defaultColor) {
+      var fontBoxValue = document.getElementById(inputId).value.split('-')
+      if(opacityLock){
+        document.getElementById(inputId).value = defaultColor +"-" + fontBoxValue[1];
+      }
+      else{
+        document.getElementById(inputId).value = fontBoxValue[0] +"-" + defaultColor;
+      }
+    }
+
+
+  </script>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  {% if category == 'error' %}
+  <script>
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: '{{ message }}',
+    })
+  </script>
+  {% elif category == 'success' %}
+  <script>
+    Swal.fire(
+      'Good job!',
+      '{{ message }}',
+      'success'
+    )
+  </script>
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+</body>
+
+</html>

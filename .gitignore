@@ -1,0 +1,6 @@
+*.log
+*.pid
+*.pyc
+supervisord.log
+app/__pycache__/__init__.cpython-37.pyc
+app/__pycache__/image_processor.cpython-37.pyc

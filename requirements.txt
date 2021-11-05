@@ -1,0 +1,9 @@
+flask
+celery
+redis
+Pillow
+requests
+gunicorn
+pandas
+flower
+tabulate
