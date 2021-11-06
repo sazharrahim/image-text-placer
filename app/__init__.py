@@ -225,7 +225,7 @@ def load_update_img(url, text, name, font_position, site_link, text_font_color, 
             bmt = ap["bottom_margin_text"]
             url_link = site_link
             titletx = text
-            output_name = save_folder+"/" + str(int(datetime.now().timestamp())+random.randint(1000,9999)) + file_extension + "," titletx
+            output_name = save_folder+"/" + str(int(datetime.now().timestamp())+random.randint(1000,9999)) + file_extension","titletx
             # its the image aplha not the rectangle color--os.path.basename(url)
 
             if font_position.lower() == "bottom" and box_type == "rectangle":
