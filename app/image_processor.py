@@ -7,7 +7,7 @@ app_settings = {
     "url_font_color": 'rgba(255, 255, 255, 10)',
     "text_rectangle_opacity": 70,
     "url_rectangle_opacity": 70,
-    "text_font_size": 0.200,
+    "text_font_size": 0.900,
     "url_font_size": 0.036,
     "margin_lr": 5,  # left, right
     "default_text_position": 0,  # 0 middle, -1 top, 1 bottom
