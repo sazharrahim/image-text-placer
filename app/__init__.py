@@ -160,7 +160,7 @@ def get_file():
 
             df['text_font_style'] = np.random.choice( request.form.getlist('fontstyle'), len(df))
             df['url_font_style'] = np.random.choice( request.form.getlist('fontstyle'), len(df))
-            df["text_font_size"] = 0.200
+            df["text_font_size"] = 1.199
             df["url_font_size"] = 0.036
             df["box_type"] = np.random.choice( request.form.getlist('boxtype'), len(df))
             df["border_width"] = 0
