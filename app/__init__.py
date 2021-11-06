@@ -160,7 +160,7 @@ def get_file():
 
             df['text_font_style'] = np.random.choice( request.form.getlist('fontstyle'), len(df))
             df['url_font_style'] = np.random.choice( request.form.getlist('fontstyle'), len(df))
-            df["text_font_size"] = 1.199
+            df["text_font_size"] = 0.900
             df["url_font_size"] = 0.036
             df["box_type"] = np.random.choice( request.form.getlist('boxtype'), len(df))
             df["border_width"] = 0
@@ -224,7 +224,7 @@ def load_update_img(url, text, name, font_position, site_link, text_font_color, 
             image_opacity = ap["image_opacity"]
             bmt = ap["bottom_margin_text"]
             url_link = site_link
-            output_name = save_folder+"/" + str(int(datetime.now().timestamp())+random.randint(0,9999)) + file_extension
+            output_name = save_folder+"/" + str(int(datetime.now().timestamp())+random.randint(99,9999)) + file_extension
             # its the image aplha not the rectangle color--os.path.basename(url)
 
             if font_position.lower() == "bottom" and box_type == "rectangle":
